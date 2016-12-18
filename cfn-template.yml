@@ -9,7 +9,7 @@ Parameters:
     Type: String
     Default: aws-starter-kit
     Description: Name of the CloudFormation stack
-  StackName:
+  StackFileName:
     Type: String
     Default: cfn-template.yml
     Description: CloudFormation stack template filename in the Git repo
