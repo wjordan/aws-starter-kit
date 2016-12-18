@@ -28,7 +28,7 @@ Resources:
     Type: AWS::CodePipeline::Pipeline
     Properties:
       Name: Pipeline
-      RoleArn: !Ref PipelineRole
+      RoleArn: !GetAtt [PipelineRole, Arn]
       ArtifactStore: 
         Type: S3
         Location: !Ref ArtifactBucket
