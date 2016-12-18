@@ -4,7 +4,7 @@ Parameters:
   ArtifactBucket:
     Type: String
     Default: aws-codepipeline
-    Description: The unique S3 bucket where pipeline artifacts are located
+    Description: Name of existing S3 bucket for storing pipeline artifacts
   StackFileName:
     Type: String
     Default: cfn-template.yml
@@ -25,11 +25,6 @@ Parameters:
     Type: String
     Description: GitHub repository OAuth token
 Resources:
-  Artifacts:
-    Type: AWS::S3::Bucket
-    DeletionPolicy: Retain
-    Properties:
-      BucketName: !Ref ArtifactBucket
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
