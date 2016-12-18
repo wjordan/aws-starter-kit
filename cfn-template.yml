@@ -32,7 +32,7 @@ Resources:
       RoleArn: !GetAtt [PipelineRole, Arn]
       ArtifactStore: 
         Type: S3
-        Location: !Ref Artifacts
+        Location: !Ref ArtifactBucket
       Stages:
       - Name: Source
         Actions:
