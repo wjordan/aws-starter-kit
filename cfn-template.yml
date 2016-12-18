@@ -35,7 +35,8 @@ Resources:
       Stages:
       - Name: Source
         Actions:
-        - ActionTypeId:
+        - Name: Source
+          ActionTypeId:
             Category: Source
             Owner: ThirdParty
             Version: 1
@@ -49,7 +50,8 @@ Resources:
           - Name: TemplateSource
       - Name: Deploy
         Actions:
-        - ActionTypeId:
+        - Name: Deploy
+          ActionTypeId:
             Category: Deploy
             Owner: AWS
             Version: 1
