@@ -63,7 +63,7 @@ Resources:
             RoleArn: !GetAtt [CFNRole, Arn]
             StackName: !Ref AWS::StackName
             TemplatePath: !Sub "TemplateSource::${StackFileName}"
-            Capabilities: [CAPABILITY_IAM]
+            Capabilities: CAPABILITY_IAM
   CFNRole:
     Type: AWS::IAM::Role
     Properties:
