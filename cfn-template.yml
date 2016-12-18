@@ -55,7 +55,7 @@ Resources:
             Category: Deploy
             Owner: AWS
             Version: 1
-            Provider: AWS CloudFormation
+            Provider: CloudFormation
           InputArtifacts:
           - Name: TemplateSource
           Configuration:
