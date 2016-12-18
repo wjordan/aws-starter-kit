@@ -1,0 +1,114 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Continuous Deployment setup using CodePipeline and CloudFormation.
+Parameters:
+  ArtifactBucket:
+    Type: String
+    Default: aws-codepipeline
+    Description: The unique S3 bucket where pipeline artifacts are located
+  StackName:
+    Type: String
+    Default: aws-starter-kit
+    Description: Name of the CloudFormation stack
+  GitHubOwner:
+    Type: String
+    Description: GitHub repository owner
+  GitHubRepo:
+    Type: String
+    Default: aws-starter-kit
+    Description: GitHub repository name
+  GitHubBranch:
+    Type: String
+    Default: master
+    Description: GitHub repository branch
+  GitHubToken:
+    Type: String
+    Description: GitHub repository OAuth token
+Resources:
+  Pipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: Pipeline
+      RoleArn: !Ref PipelineRole
+      ArtifactStore: 
+        Type: S3
+        Location: !Ref ArtifactBucket
+      Stages:
+      - Name: Source
+        Actions:
+        - ActionTypeId:
+            Category: Source
+            Owner: ThirdParty
+            Version: 1
+            Provider: GitHub
+          Configuration:
+            Owner: !Ref GitHubOwner
+            Repo: !Ref GitHubRepo
+            Branch: !Ref GitHubBranch
+            OAuthToken: !Ref GitHubToken
+          OutputArtifacts:
+          - Name: TemplateSource
+      - Name: Deploy
+        Actions:
+        - ActionTypeId:
+            Category: Deploy
+            Owner: AWS
+            Version: 1
+            Provider: AWS CloudFormation
+          InputArtifacts:
+          - Name: TemplateSource
+          Configuration:
+            ActionMode: REPLACE_ON_FAILURE
+            RoleArn: !GetAtt [CFNRole, Arn]
+            StackName: !Ref StackName
+            TemplatePath: !Sub "TemplateSource::${StackFileName}"
+            Capabilities: [CAPABILITY_IAM]
+  CFNRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action: ['sts:AssumeRole']
+          Effect: Allow
+          Principal: {Service: [cloudformation.amazonaws.com]}
+        Version: '2012-10-17'
+      Path: /
+      Policies:
+      - PolicyName: CloudFormationRole
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Action:
+                - 'cloudformation:*'
+                - 'iam:*'
+              Effect: Allow
+              Resource: '*'
+              
+  PipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action: ['sts:AssumeRole']
+          Effect: Allow
+          Principal: {Service: [codepipeline.amazonaws.com]}
+        Version: '2012-10-17'
+      Path: /
+      Policies:
+        - PolicyName: CodePipelineAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                - 's3:*'
+                - 'cloudformation:CreateStack'
+                - 'cloudformation:DescribeStacks'
+                - 'cloudformation:DeleteStack'
+                - 'cloudformation:UpdateStack'
+                - 'cloudformation:CreateChangeSet'
+                - 'cloudformation:ExecuteChangeSet'
+                - 'cloudformation:DeleteChangeSet'
+                - 'cloudformation:DescribeChangeSet'
+                - 'cloudformation:SetStackPolicy'
+                - 'iam:PassRole'
+                Effect: Allow
+                Resource: '*'
