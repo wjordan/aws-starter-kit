@@ -5,10 +5,6 @@ Parameters:
     Type: String
     Default: aws-codepipeline
     Description: The unique S3 bucket where pipeline artifacts are located
-  StackName:
-    Type: String
-    Default: aws-starter-kit
-    Description: Name of the CloudFormation stack
   StackFileName:
     Type: String
     Default: cfn-template.yml
@@ -63,7 +59,7 @@ Resources:
           Configuration:
             ActionMode: REPLACE_ON_FAILURE
             RoleArn: !GetAtt [CFNRole, Arn]
-            StackName: !Ref StackName
+            StackName: !Ref AWS::StackName
             TemplatePath: !Sub "TemplateSource::${StackFileName}"
             Capabilities: [CAPABILITY_IAM]
   CFNRole:
