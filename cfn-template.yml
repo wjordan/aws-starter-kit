@@ -11,6 +11,7 @@ Parameters:
     Description: CloudFormation stack template filename in the Git repo
   GitHubOwner:
     Type: String
+    Default: wjordan
     Description: GitHub repository owner
   GitHubRepo:
     Type: String
@@ -24,6 +25,11 @@ Parameters:
     Type: String
     Description: GitHub repository OAuth token
 Resources:
+  ArtifactBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: !Ref ArtifactBucket
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
