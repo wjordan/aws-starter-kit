@@ -77,11 +77,11 @@ Resources:
             Capabilities: CAPABILITY_IAM
             ParameterOverrides: !Sub |
               {
-                "ArtifactBucket": "${ArtifactBucket}"
-                "StackFileName": "${StackFileName}"
-                "GitHubOwner": "${GitHubOwner}"
-                "GitHubRepo": "${GitHubRepo}"
-                "GitHubBranch": "${GitHubBranch}"
+                "ArtifactBucket": "${ArtifactBucket}",
+                "StackFileName": "${StackFileName}",
+                "GitHubOwner": "${GitHubOwner}",
+                "GitHubRepo": "${GitHubRepo}",
+                "GitHubBranch": "${GitHubBranch}",
                 "GitHubToken": "${GitHubToken}"
               }
   CFNRole:
