@@ -47,8 +47,17 @@ Resources:
             Repo: !Ref GitHubRepo
             Branch: !Ref GitHubBranch
             OAuthToken: !Ref GitHubToken
-          OutputArtifacts:
-          - Name: TemplateSource
+          OutputArtifacts: [Name: Template]
+        # - Name: Secrets
+        #   ActionTypeId:
+        #     Category: Source
+        #     Owner: AWS
+        #     Version: 1
+        #     Provider: S3
+        #   Configuration:
+        #     S3Bucket: !Ref SecretsBucket
+        #     S3ObjectKey: !Ref SecretsKey
+        #   OutputArtifacts: [Name: Secrets]
       - Name: Deploy
         Actions:
         - Name: Deploy
@@ -58,13 +67,23 @@ Resources:
             Version: 1
             Provider: CloudFormation
           InputArtifacts:
-          - Name: TemplateSource
+          - Name: Template
+          # - Name: Secrets
           Configuration:
             ActionMode: REPLACE_ON_FAILURE
             RoleArn: !GetAtt [CFNRole, Arn]
             StackName: !Ref AWS::StackName
-            TemplatePath: !Sub "TemplateSource::${StackFileName}"
+            TemplatePath: !Sub "Template::${StackFileName}"
             Capabilities: CAPABILITY_IAM
+            ParameterOverrides: !Sub |
+              {
+                "ArtifactBucket": "${ArtifactBucket}"
+                "StackFileName": "${StackFileName}"
+                "GitHubOwner": "${GitHubOwner}"
+                "GitHubRepo": "${GitHubRepo}"
+                "GitHubBranch": "${GitHubBranch}"
+                "GitHubToken": "${GitHubToken}"
+              }
   CFNRole:
     Type: AWS::IAM::Role
     Properties:
@@ -103,15 +122,7 @@ Resources:
             Statement:
               - Action:
                 - 's3:*'
-                - 'cloudformation:CreateStack'
-                - 'cloudformation:DescribeStacks'
-                - 'cloudformation:DeleteStack'
-                - 'cloudformation:UpdateStack'
-                - 'cloudformation:CreateChangeSet'
-                - 'cloudformation:ExecuteChangeSet'
-                - 'cloudformation:DeleteChangeSet'
-                - 'cloudformation:DescribeChangeSet'
-                - 'cloudformation:SetStackPolicy'
+                - 'cloudformation:*'
                 - 'iam:PassRole'
                 Effect: Allow
                 Resource: '*'
