@@ -66,9 +66,7 @@ Resources:
             Owner: AWS
             Version: 1
             Provider: CloudFormation
-          InputArtifacts:
-          - Name: Template
-          # - Name: Secrets
+          InputArtifacts: [Name: Template]
           Configuration:
             ActionMode: REPLACE_ON_FAILURE
             RoleArn: !GetAtt [CFNRole, Arn]
@@ -102,9 +100,9 @@ Resources:
             - Action:
                 - 'cloudformation:*'
                 - 'iam:*'
+                - 'sns:*'
               Effect: Allow
               Resource: '*'
-              
   PipelineRole:
     Type: AWS::IAM::Role
     Properties:
@@ -126,5 +124,3 @@ Resources:
                 - 'iam:PassRole'
                 Effect: Allow
                 Resource: '*'
-  Topic:
-    Type: AWS::SNS::Topic
