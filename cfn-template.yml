@@ -124,3 +124,5 @@ Resources:
                 - 'iam:PassRole'
                 Effect: Allow
                 Resource: '*'
+  Topic:
+    Type: AWS::SNS::Topic
